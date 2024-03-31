@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .user-list {
+            width: 70%;
+            padding: 0 20px;
+        }
+
+        .user-actions {
+            width: 30%;
+            padding: 0 20px;
+            margin-top: 75px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ffffff;
+        }
+
+        input, select {
+            box-sizing: border-box;
+            width: 30%;
+            padding: 3px;
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="user-list">
+        <h2>All users</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.firstName}"></td>
+                <td th:text="${user.lastName}"></td>
+                <td th:text="${user.age}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.printRoles()}"></td>
+                <td>
+                    <form th:action="@{/admin/delete}" method="get">
+                        <input type="hidden" name="id" th:value="${user.id}"/>
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="user-actions">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+        <h2>Add new user</h2>
+        <form th:action="@{/admin/add}" method="post">
+            <input type="text" name="firstName" placeholder="First Name" required/>
+            <br>
+            <input type="text" name="lastName" placeholder="Last Name" required/>
+            <br>
+            <input type="number" name="age" placeholder="Age" required/>
+            <br>
+            <input type="text" name="email" placeholder="Email" required/>
+            <br>
+            <input type="password" name="password" placeholder="Password" required/>
+            <br>
+            <select name="roles" multiple size="2" required>
+                <option value="admin">ADMIN</option>
+                <option value="user">USER</option>
+            </select>
+            <br>
+            <br>
+            <button type="submit">Add new user</button>
+        </form>
+        <h2>Edit user</h2>
+        <form th:action="@{/admin/update}" method="post">
+            <input type="number" name="id" placeholder="ID" required/>
+            <br>
+            <input type="text" name="firstName" placeholder="First Name"/>
+            <br>
+            <input type="text" name="lastName" placeholder="Last Name"/>
+            <br>
+            <input type="number" name="age" placeholder="Age"/>
+            <br>
+            <input type="text" name="email" placeholder="Email"/>
+            <br>
+            <input type="password" name="password" placeholder="Password"/>
+            <br>
+            <select name="roles" multiple size="2">
+                <option value="admin">ADMIN</option>
+                <option value="user">USER</option>
+            </select>
+            <br>
+            <br>
+            <button type="submit">Edit user</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
