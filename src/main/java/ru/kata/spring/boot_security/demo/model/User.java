@@ -24,7 +24,7 @@ public class User implements UserDetails {
 
     private String password;
 
-    private int age;
+    private Integer age;
 
     private String firstName;
 
@@ -44,7 +44,7 @@ public class User implements UserDetails {
 
     }
 
-    public User(String firstName, String lastName, int age, String email, String password) {
+    public User(String firstName, String lastName, Integer age, String email, String password) {
         this.email = email;
         this.password = password;
         this.age = age;
@@ -91,6 +91,10 @@ public class User implements UserDetails {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -103,11 +107,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -144,6 +148,19 @@ public class User implements UserDetails {
             sb.append(" ");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", age=" + age +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }
 

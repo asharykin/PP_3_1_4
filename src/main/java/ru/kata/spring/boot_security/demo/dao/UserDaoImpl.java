@@ -1,6 +1,9 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -11,6 +14,7 @@ import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -30,34 +34,55 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void addUser(User user, List<String> rolesList) {
-        if (rolesList != null) {
-            Set<Role> roles = new HashSet<>();
-            addRolesToSet(rolesList, roles);
-            user.setRoles(roles);
+    public void addUser(User user) {
+        if (getUserByEmail(user.getEmail()) == null) {
+            if (getUserById(1) != null && getUserById(2) != null) {
+                Set<Role> roles = getDistinctRoles(user.getRoles());
+                user.setRoles(roles);
+            }
+            user.setPassword(encodePassword(user.getPassword()));
+            entityManager.persist(user);
         }
-        entityManager.persist(user);
     }
 
     @Override
-    public void updateUser(User user, List<String> rolesList) {
-        if (rolesList != null) {
+    public void updateUser(User user) {
+        User existingUser = getUserById(user.getId());
+        if (existingUser != null) {
+            existingUser.setFirstName(user.getFirstName().isEmpty() ? existingUser.getFirstName() : user.getFirstName());
+            existingUser.setLastName(user.getLastName().isEmpty() ? existingUser.getLastName() : user.getFirstName());
+            existingUser.setAge(user.getAge() == null ? existingUser.getAge() : user.getAge());
+            existingUser.setEmail(user.getEmail().isEmpty() || getUserByEmail(user.getEmail()) != null ? existingUser.getEmail() : user.getEmail());
+            existingUser.setPassword(user.getPassword().isEmpty() ? existingUser.getPassword() : encodePassword(user.getPassword()));
             Set<Role> roles = user.getRoles();
-            roles.clear();
-            addRolesToSet(rolesList, roles);
+            if (roles != null) {
+                existingUser.getRoles().clear();
+                Set<Role> newRoles = getDistinctRoles(roles);
+                existingUser.setRoles(newRoles);
+            }
+            entityManager.merge(existingUser);
         }
-        entityManager.merge(user);
+
     }
 
-    private void addRolesToSet(List<String> rolesList, Set<Role> roles) {
-        if (rolesList.contains("admin")) {
+    private Set<Role> getDistinctRoles(Set<Role> rolesList) {
+        Set<Role> roles = new HashSet<>();
+        Set<String> stringRoles = rolesList.stream().map(role -> role.getRole()).collect(Collectors.toSet());
+        if (stringRoles.contains("admin")) {
             Role adminRole = entityManager.find(Role.class, 1);
             roles.add(adminRole);
         }
-        if (rolesList.contains("user")) {
+        if (stringRoles.contains("user")) {
             Role userRole = entityManager.find(Role.class, 2);
             roles.add(userRole);
         }
+        return roles;
+    }
+
+    private String encodePassword(String rawPassword) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12);
+        String encodedPassword = encoder.encode(rawPassword);
+        return encodedPassword;
     }
 
     @Override

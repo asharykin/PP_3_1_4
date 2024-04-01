@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -44,25 +45,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder(12);
     }
 
     private void initData() {
         if (userService.getUserById(1) == null) {
             User admin = new User("admin", "admin", 35, "admin@mail.ru", "admin");
-            Role roleAdmin = new Role("ROLE_ADMIN");
             Set<Role> adminRoles = new HashSet<>();
-            adminRoles.add(roleAdmin);
+            adminRoles.add(new Role("ROLE_ADMIN"));
             admin.setRoles(adminRoles);
-            userService.addUser(admin, null);
+            userService.addUser(admin);
         }
         if (userService.getUserById(2) == null) {
             User user = new User("user", "user", 30, "user@mail.ru", "user");
-            Role roleUser = new Role("ROLE_USER");
             Set<Role> userRoles = new HashSet<>();
-            userRoles.add(roleUser);
+            userRoles.add(new Role("ROLE_USER"));
             user.setRoles(userRoles);
-            userService.addUser(user, null);
+            userService.addUser(user);
         }
     }
 
