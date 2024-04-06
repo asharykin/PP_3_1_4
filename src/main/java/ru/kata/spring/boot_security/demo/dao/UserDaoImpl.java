@@ -48,10 +48,10 @@ public class UserDaoImpl implements UserDao {
     public void updateUser(User user) {
         User existingUser = getUserById(user.getId());
         if (existingUser != null) {
-            existingUser.setFirstName(user.getFirstName().isEmpty() ? existingUser.getFirstName() : user.getFirstName());
-            existingUser.setLastName(user.getLastName().isEmpty() ? existingUser.getLastName() : user.getFirstName());
-            existingUser.setAge(user.getAge() == null ? existingUser.getAge() : user.getAge());
-            existingUser.setEmail(user.getEmail().isEmpty() || getUserByEmail(user.getEmail()) != null ? existingUser.getEmail() : user.getEmail());
+            existingUser.setFirstName(user.getFirstName());
+            existingUser.setLastName(user.getLastName());
+            existingUser.setAge(user.getAge());
+            existingUser.setEmail(getUserByEmail(user.getEmail()) != null ? existingUser.getEmail() : user.getEmail());
             existingUser.setPassword(user.getPassword().isEmpty() ? existingUser.getPassword() : encodePassword(user.getPassword()));
             Set<Role> roles = user.getRoles();
             if (roles != null) {

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.security.Principal;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -19,9 +21,10 @@ public class AdminController {
     private UserService userService;
 
     @GetMapping()
-    public String getAllUsers(ModelMap model) {
+    public String getAllUsers(ModelMap model, Principal principal) {
+        model.addAttribute("currentUser", userService.getUserByEmail(principal.getName()));
         model.addAttribute("users", userService.getAllUsers());
-        return "admin";
+        return "admin_2";
     }
 
     @PostMapping("/add")
@@ -32,12 +35,14 @@ public class AdminController {
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
+        System.out.println(user);
         userService.updateUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public String deleteUser(@ModelAttribute User user) {
+        System.out.println(user);
         userService.deleteUser(user.getId());
         return "redirect:/admin";
     }
