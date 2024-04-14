@@ -1,49 +1,49 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.security.Principal;
+import java.util.List;
 
 
-@Controller
-@RequestMapping("/admin")
+@RestController
+@RequestMapping("/admin_rest")
 public class AdminController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping()
-    public String getAllUsers(ModelMap model, Principal principal) {
-        model.addAttribute("currentUser", userService.getUserByEmail(principal.getName()));
-        model.addAttribute("users", userService.getAllUsers());
-        return "admin_2";
+    public ResponseEntity<List<User>> getUsersTable() {
+        List<User> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute User user) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        User user = userService.getUserById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         userService.addUser(user);
-        return "redirect:/admin";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/update")
-    public String updateUser(@ModelAttribute User user) {
-        System.out.println(user);
+    @PutMapping()
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
         userService.updateUser(user);
-        return "redirect:/admin";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/delete")
-    public String deleteUser(@ModelAttribute User user) {
-        System.out.println(user);
-        userService.deleteUser(user.getId());
-        return "redirect:/admin";
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

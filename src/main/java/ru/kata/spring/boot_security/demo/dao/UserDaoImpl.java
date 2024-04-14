@@ -54,7 +54,7 @@ public class UserDaoImpl implements UserDao {
             existingUser.setEmail(getUserByEmail(user.getEmail()) != null ? existingUser.getEmail() : user.getEmail());
             existingUser.setPassword(user.getPassword().isEmpty() ? existingUser.getPassword() : encodePassword(user.getPassword()));
             Set<Role> roles = user.getRoles();
-            if (roles != null) {
+            if (roles != null && !roles.isEmpty()) {
                 existingUser.getRoles().clear();
                 Set<Role> newRoles = getDistinctRoles(roles);
                 existingUser.setRoles(newRoles);
@@ -67,11 +67,11 @@ public class UserDaoImpl implements UserDao {
     private Set<Role> getDistinctRoles(Set<Role> rolesList) {
         Set<Role> roles = new HashSet<>();
         Set<String> stringRoles = rolesList.stream().map(role -> role.getRole()).collect(Collectors.toSet());
-        if (stringRoles.contains("admin")) {
+        if (stringRoles.contains("ADMIN")) {
             Role adminRole = entityManager.find(Role.class, 1);
             roles.add(adminRole);
         }
-        if (stringRoles.contains("user")) {
+        if (stringRoles.contains("USER")) {
             Role userRole = entityManager.find(Role.class, 2);
             roles.add(userRole);
         }
