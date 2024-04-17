@@ -55,10 +55,10 @@ public class Role implements GrantedAuthority {
         return id == role1.id && Objects.equals(role, role1.role) && Objects.equals(users, role1.users);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, role, users);
-    }
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, role, users);
+//   }
 
     @Override
     public String toString() {
