@@ -8,11 +8,11 @@ public class ViewController {
 
     @GetMapping("/admin")
     public String getAdminPage() {
-        return "admin_2";
+        return "admin_view";
     }
 
     @GetMapping("/user")
     public String getUserPage() {
-        return "user_2";
+        return "user_view";
     }
 }

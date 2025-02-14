@@ -1,5 +1,5 @@
 function getCurrentUser() {
-    fetch('/user_rest')
+    fetch('/users/current')
         .then(response => response.json())
         .then(user => {
             let roles = user.roles.map(role => role.role.replace('ROLE_', '')).sort().join(' ');
@@ -30,7 +30,7 @@ function addUser() {
             password: form.password.value,
             roles: userRoles
         }
-        fetch('/admin_rest', {
+        fetch('/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -48,10 +48,10 @@ function updateUser(id) {
     let form = document.getElementById('formEdit');
     let modal = document.getElementById('modalEdit');
     modal.style.display = 'block';
-    fetch("/admin_rest/" + id)
+    fetch('/users/' + id)
         .then(response => response.json())
         .then(user => {
-            form.id.value = user.id;
+            form.id = user.id;
             form.firstname.value = user.firstName;
             form.lastname.value = user.lastName;
             form.age.value = user.age;
@@ -75,7 +75,7 @@ function updateUser(id) {
             password: form.password.value,
             roles: userRoles
         }
-        fetch('/admin_rest', {
+        fetch('/users/' + id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -92,10 +92,10 @@ function deleteUser(id) {
     let form = document.getElementById('formDelete');
     let modal = document.getElementById('modalDelete');
     modal.style.display = 'block';
-    fetch("/admin_rest/" + id)
+    fetch("/users/" + id)
         .then(response => response.json())
         .then(user => {
-            form.id.value = user.id;
+            form.id = user.id;
             form.firstname.value = user.firstName;
             form.lastname.value = user.lastName;
             form.age.value = user.age;
@@ -103,7 +103,7 @@ function deleteUser(id) {
         })
     form.addEventListener('submit', event => {
         event.preventDefault();
-        fetch("/admin_rest/" + id, {
+        fetch("/users/" + id, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ function deleteUser(id) {
 function getUsersTable() {
     let table = document.getElementById('allUsersTable');
     table.innerHTML = '';
-    fetch("/admin_rest")
+    fetch("/users")
         .then(response => response.json())
         .then(users => {
             console.log(users);
