@@ -51,7 +51,7 @@ function updateUser(id) {
     fetch('/users/' + id)
         .then(response => response.json())
         .then(user => {
-            form.id = user.id;
+            form.id.value = user.id;
             form.firstname.value = user.firstName;
             form.lastname.value = user.lastName;
             form.age.value = user.age;
@@ -95,7 +95,7 @@ function deleteUser(id) {
     fetch("/users/" + id)
         .then(response => response.json())
         .then(user => {
-            form.id = user.id;
+            form.id.value = user.id;
             form.firstname.value = user.firstName;
             form.lastname.value = user.lastName;
             form.age.value = user.age;
